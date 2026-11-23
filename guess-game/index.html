@@ -1,0 +1,101 @@
+<!doctype html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+  <head>
+    <title>Guess Game</title>
+    <!-- You may change the CSS location based on your file structure-->
+    <link rel="stylesheet" href="public/css/guesss-game.css" />
+  
+
+</head>
+  <body>
+    <div class="main-container">
+      <h2>Guess Game</h2>
+      <div style="margin-bottom: 10px">
+        Guess a number between 1 - 20, you have 5 chances.
+      </div>
+      <div class="input">
+        <input type="text" id="guess-value" name="guess-value" />
+        <button id="guess-btn">Guess!</button>
+        <button id="restart-btn">Restart</button>
+      </div>
+      <hr />
+      <div id="attempt-text" style="margin-bottom: 10px">
+        Attempt <span id="attempt"></span>/5
+      </div>
+      <div id="result"></div>
+    <script>
+      const guessInput = document.getElementById("guess-value");
+      const guessButton = document.getElementById("guess-btn");
+      const restartButton = document.getElementById("restart-btn");
+      const attemptText = document.getElementById("attempt");
+      const result = document.getElementById("result");
+
+      let targetNumber;
+      let attempts = 0;
+      const maxAttempts = 5;
+
+      // Initial screen: only Restart is visible.
+      guessInput.style.display = "none";
+      guessButton.style.display = "none";
+      restartButton.style.display = "inline-block";
+      attemptText.textContent = "0";
+      result.textContent = "";
+
+      function startGame() {
+        targetNumber = Math.floor(Math.random() * 20) + 1;
+        attempts = 0;
+        attemptText.textContent = attempts;
+        result.textContent = "";
+        guessInput.value = "";
+        guessInput.style.display = "inline-block";
+        guessButton.style.display = "inline-block";
+        restartButton.style.display = "none";
+        guessInput.focus();
+      }
+
+      function finishGame(message) {
+        result.textContent = message;
+        guessButton.style.display = "none";
+        restartButton.textContent = "Restart";
+        restartButton.style.display = "inline-block";
+      }
+
+      function makeGuess() {
+        const rawValue = guessInput.value.trim();
+        if (rawValue === "" || !Number.isFinite(Number(rawValue))) {
+          return;
+        }
+
+        const guess = Number(rawValue);
+        if (!Number.isInteger(guess) || guess < 1 || guess > 20) {
+          return;
+        }
+
+        attempts++;
+        attemptText.textContent = attempts;
+
+        if (guess === targetNumber) {
+          finishGame("You WIN");
+        } else if (attempts === maxAttempts) {
+          finishGame("You LOSE. The number was " + targetNumber);
+        } else if (guess > targetNumber) {
+          result.textContent = guess + " is too high";
+        } else {
+          result.textContent = guess + " is too low";
+        }
+
+        if (guessButton.style.display !== "none") {
+          guessInput.value = "";
+          guessInput.focus();
+        }
+      }
+
+      guessButton.addEventListener("click", makeGuess);
+      restartButton.addEventListener("click", startGame);
+      guessInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") makeGuess();
+      });
+    </script>
+    </div>
+  </body>
+</html>
